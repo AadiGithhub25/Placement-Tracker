@@ -1,0 +1,142 @@
+generator client {
+  provider        = "prisma-client-js"
+  previewFeatures = ["postgresqlExtensions"]
+}
+
+datasource db {
+  provider  = "postgresql"
+  url       = env("DATABASE_URL")
+  directUrl = env("DIRECT_URL")
+}
+
+enum UserRole {
+  STUDENT
+  ADMIN
+}
+
+enum PlacementOutcome {
+  PLACED
+  FINAL_ROUND_REJECT
+  REJECTED_EARLY
+  APPEARED
+}
+
+model User {
+  id              String                @id @default(uuid())
+  email           String                @unique
+  password        String
+  name            String
+  rollNumber      String?               @unique
+  department      String?
+  graduationYear  Int?
+  role            UserRole              @default(STUDENT)
+  createdAt       DateTime              @default(now())
+  updatedAt       DateTime              @updatedAt
+  
+  applications    Application[]
+  experiences     InterviewExperience[]
+  votes           Vote[]
+  companiesAdded  Company[]            @relation("CompanyCreator")
+}
+
+model Company {
+  id              String   @id @default(uuid())
+  name            String
+  logo            String?
+  website         String?
+  industry        String?
+  description     String?
+  createdAt       DateTime @default(now())
+  updatedAt       DateTime @updatedAt
+  
+  // Tracking who added this company
+  createdById     String
+  createdBy       User     @relation("CompanyCreator", fields: [createdById], references: [id])
+  
+  placementData   PlacementData[]
+  deadlines       Deadline[]
+  experiences     InterviewExperience[]
+  
+  @@index([createdAt])
+}
+
+model PlacementData {
+  id             String   @id @default(uuid())
+  companyId      String
+  company        Company  @relation(fields: [companyId], references: [id], onDelete: Cascade)
+  year           Int
+  role           String
+  minPackage     Float
+  maxPackage     Float
+  avgPackage     Float
+  studentsPlaced Int
+  createdAt      DateTime @default(now())
+  
+  @@index([companyId, year])
+}
+
+model InterviewExperience {
+  id              String            @id @default(uuid())
+  userId          String
+  user            User              @relation(fields: [userId], references: [id], onDelete: Cascade)
+  companyId       String
+  company         Company           @relation(fields: [companyId], references: [id], onDelete: Cascade)
+  role            String
+  year            Int
+  round           String
+  difficulty      String
+  outcome         PlacementOutcome  @default(APPEARED)
+  experience      String            @db.Text
+  tips            String?           @db.Text
+  questionsAsked  String?           @db.Text
+  packageOffered  Float?
+  upvotes         Int               @default(0)
+  downvotes       Int               @default(0)
+  createdAt       DateTime          @default(now())
+  updatedAt       DateTime          @updatedAt
+  votes           Vote[]
+  
+  @@index([companyId, year])
+  @@index([userId])
+}
+
+model Vote {
+  id           String              @id @default(uuid())
+  userId       String
+  user         User                @relation(fields: [userId], references: [id], onDelete: Cascade)
+  experienceId String
+  experience   InterviewExperience @relation(fields: [experienceId], references: [id], onDelete: Cascade)
+  voteType     String
+  createdAt    DateTime            @default(now())
+
+  @@unique([userId, experienceId])
+}
+
+model Deadline {
+  id          String   @id @default(uuid())
+  companyId   String
+  company     Company  @relation(fields: [companyId], references: [id], onDelete: Cascade)
+  title       String
+  description String?
+  deadline    DateTime
+  link        String?
+  createdAt   DateTime @default(now())
+  
+  @@index([deadline])
+}
+
+model Application {
+  id         String   @id @default(uuid())
+  userId     String
+  user       User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  status     String
+  appliedAt  DateTime
+  notes      String?
+  createdAt  DateTime @default(now())
+}
+
+model Resume {
+  id        String   @id @default(uuid())
+  userId    String
+  createdAt DateTime @default(now())
+}

@@ -1,3 +1,39 @@
+# 🎓 PlacementTracker
+
+A comprehensive campus placement management system built with Next.js 14, helping students track applications, share interview experiences, and stay updated on placement deadlines.
+
+## ✨ Features
+
+- 🔐 **Secure Authentication** - JWT-based auth with password hashing
+- 🏢 **Company Database** - Browse companies from last 3 years
+- 📝 **Interview Experiences** - Share and read real interview experiences
+- 📊 **Track Applications** - Monitor your job application progress
+- 📅 **Deadlines** - Never miss an application deadline
+- 📈 **Statistics Dashboard** - View placement trends and insights
+- 👥 **Student Verification** - Only verified students can add companies
+- ⬆️ **Voting System** - Upvote/downvote helpful experiences
+
+## 🛠️ Tech Stack
+
+- **Framework:** Next.js 14 (App Router)
+- **Language:** TypeScript
+- **Database:** PostgreSQL with Prisma ORM
+- **Authentication:** JWT with bcryptjs
+- **Styling:** Tailwind CSS
+- **UI Design:** Apple-inspired minimalist design
+- **Icons:** Lucide React
+
+## 📋 Prerequisites
+
+- Node.js 18+ 
+- PostgreSQL database
+- npm or yarn
+
+## 🚀 Getting Started
+
+### 1. Clone the repository
+
+
 This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
 
 ## Getting Started
